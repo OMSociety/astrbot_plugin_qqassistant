@@ -1,0 +1,132 @@
+{
+    "divided_manage": {
+        "description": "分群管理（每个群独立配置）",
+        "type": "bool",
+        "default": true,
+        "hint": "开启后每个群有独立配置（如独立开关禁言规则）；关闭则所有群共用全局配置"
+    },
+    "admin_audit": {
+        "description": "进群申请发送给管理员审批",
+        "type": "bool",
+        "default": true,
+        "hint": "开启后用户申请进群会通知你审批；关闭则自动放行（需配合进群审核功能使用）"
+    },
+
+    "context_enable": {
+        "description": "启用上下文感知（让LLM理解对话场景）",
+        "type": "bool",
+        "default": true
+    },
+    "context_max_history": {
+        "description": "每个群缓存的消息条数上限",
+        "type": "int",
+        "slider": {
+            "min": 20,
+            "max": 200,
+            "step": 10
+        },
+        "default": 50,
+        "hint": "超出此数量的旧消息会被丢弃，影响LLM对群聊历史的理解深度"
+    },
+    "context_inject_count": {
+        "description": "注入LLM的历史消息条数",
+        "type": "int",
+        "slider": {
+            "min": 3,
+            "max": 20,
+            "step": 1
+        },
+        "default": 8,
+        "hint": "每次LLM请求时，向其注入的最近消息数量。设太高浪费token，设太低失去上下文"
+    },
+    "context_max_chars": {
+        "description": "历史消息最大字符数（防token溢出）",
+        "type": "int",
+        "slider": {
+            "min": 500,
+            "max": 5000,
+            "step": 500
+        },
+        "default": 2000,
+        "hint": "超出此长度的历史消息会被截断。视觉模型建议500以下，文本模型可设高"
+    },
+    "bot_names": {
+        "description": "Bot昵称列表（用于检测是否被@）",
+        "type": "list",
+        "default": [],
+        "hint": "填写Bot在QQ群里的显示名称，不区分大小写。用于判断当前消息是否在和Bot说话"
+    },
+    "llm_get_msg_count": {
+        "description": "LLM工具调用时传入的历史消息数量上限",
+        "type": "int",
+        "default": 10,
+        "hint": "当LLM调用工具（如搜索历史）时，向其传入的上下文消息上限，影响对话连贯性"
+    },
+
+    "forward_parse_enable": {
+        "description": "启用合并转发消息解析",
+        "type": "bool",
+        "default": true,
+        "hint": "开启后Bot能理解群里的「合并转发」消息内容并提取文字"
+    },
+    "forward_max_nesting_depth": {
+        "description": "合并转发最大嵌套层数",
+        "type": "int",
+        "slider": {
+            "min": 1,
+            "max": 10,
+            "step": 1
+        },
+        "default": 3,
+        "hint": "合并转发消息内嵌转发消息的最大层数。设太高可能解析超时"
+    },
+    "forward_include_sender_info": {
+        "description": "转发消息附带发送者昵称",
+        "type": "bool",
+        "default": true,
+        "hint": "开启时解析出的转发消息会标注每条消息的发送者名称"
+    },
+    "forward_include_timestamp": {
+        "description": "转发消息附带发送时间",
+        "type": "bool",
+        "default": true,
+        "hint": "开启时解析出的转发消息会标注每条消息的发送时间"
+    },
+
+    "tools": {
+        "description": "LLM工具开关",
+        "type": "object",
+        "items": {
+            "tool_group_info": {
+                "description": "信息查询工具（成员列表/群信息/用户信息）",
+                "type": "bool",
+                "default": true,
+                "hint": "允许LLM查询群成员列表、群信息、用户资料"
+            },
+            "tool_group_action": {
+                "description": "群操作工具（戳一戳/禁言/改名/头衔/精华）",
+                "type": "bool",
+                "default": true,
+                "hint": "允许LLM执行戳一戳、禁言、解禁、修改群名片、设置头衔、设置精华消息等操作"
+            },
+            "tool_group_search": {
+                "description": "搜索工具（历史记录/跨群搜索/场景判断）",
+                "type": "bool",
+                "default": true,
+                "hint": "允许LLM搜索群聊历史、跨群/私聊记录、判断当前对话场景"
+            },
+            "tool_group_batch": {
+                "description": "批量操作工具（批量禁言/批量改名片/批量发消息）",
+                "type": "bool",
+                "default": true,
+                "hint": "允许LLM批量执行操作，需配合tool_group_action使用"
+            },
+            "tool_group_monitor": {
+                "description": "自动监控（刷屏检测/进群审核）",
+                "type": "bool",
+                "default": true,
+                "hint": "开启后Bot自动检测刷屏行为和进群申请"
+            }
+        }
+    }
+}
