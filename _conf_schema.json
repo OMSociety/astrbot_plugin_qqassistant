@@ -11,6 +11,12 @@
         "default": true,
         "hint": "开启后用户申请进群会通知你审批；关闭则自动放行（需配合进群审核功能使用）"
     },
+    "default": {
+        "description": "分群管理的默认配置",
+        "type": "object",
+        "items": {},
+        "default": {}
+    },
 
     "context_enable": {
         "description": "启用上下文感知（让LLM理解对话场景）",
