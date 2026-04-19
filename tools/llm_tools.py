@@ -95,11 +95,15 @@ class LLMGetGroupMemberList(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool()
-    async def llm_get_group_member_list(event: AiocqhttpMessageEvent) -> Generator[str, Any, None]:
+    async def llm_get_group_member_list(self, event: AiocqhttpMessageEvent) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_info", True):
+            yield "该功能已关闭~"
+            return
+
         获取当前群聊成员列表（昵称/名片/QQ/身份/头衔）
+
         重要提示：在调用需要 user_id 的工具（如禁言、设置头衔、戳一戳）前，应先调用本工具获取群成员列表和对应的QQ号码。
         
         Returns:
@@ -158,11 +162,15 @@ class LLMGetUserInfo(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool()
-    async def llm_get_user_info(event: AiocqhttpMessageEvent, qq_id: Optional[str] = None) -> Generator[str, Any, None]:
+    async def llm_get_user_info(self, event: AiocqhttpMessageEvent, qq_id: Optional[str] = None) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_info", True):
+            yield "该功能已关闭~"
+            return
+
         获取QQ用户信息（群聊优先取群成员信息，否则取陌生人信息）
+
         Args:
             qq_id (str): 要查询的QQ号，默认为空表示查询消息发送者
         
@@ -220,9 +228,14 @@ class LLMGetGroupInfo(LLMToolBase):
     @filter.llm_tool(
         description="获取当前群的详细信息，包括群号、群名、群人数、群主、描述等"
     )
-    async def llm_get_group_info(event: AiocqhttpMessageEvent) -> Generator[str, Any, None]:
+    async def llm_get_group_info(self, event: AiocqhttpMessageEvent) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_info", True):
+            yield "该功能已关闭~"
+            return
+
         获取当前群聊的信息
+
         
         Returns:
             str: 群信息，格式为多行文本，包含群号、群名、人数、群主、描述等
@@ -271,11 +284,15 @@ class LLMPokeUser(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool()
-    async def llm_poke_user(event: AiocqhttpMessageEvent, qq_id: str) -> Generator[str, Any, None]:
+    async def llm_poke_user(self, event: AiocqhttpMessageEvent, qq_id: str) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
+
         戳一戳指定用户（群聊/私聊自动判断）
+
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
         Args:
@@ -310,11 +327,15 @@ class LLMSetGroupBanUser(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool()
-    async def llm_set_group_ban_user(event: AiocqhttpMessageEvent, user_id: str, duration: int) -> Generator[str, Any, None]:
+    async def llm_set_group_ban_user(self, event: AiocqhttpMessageEvent, user_id: str, duration: int) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
+
         对个人进行禁言（带简单权限判定提示）
+
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
         Args:
@@ -381,9 +402,14 @@ class LLMSetGroupSpecialTitle(LLMToolBase):
     @filter.llm_tool(
         description="为群成员设置专属头衔（需要群主权限或支持头衔的群）。参数：user_id-用户QQ号，title-新头衔（空字符串清除头衔）"
     )
-    async def llm_set_group_special_title(event: AiocqhttpMessageEvent, user_id: str, title: str) -> Generator[str, Any, None]:
+    async def llm_set_group_special_title(self, event: AiocqhttpMessageEvent, user_id: str, title: str) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
+
         为群成员设置专属头衔（需要群主权限或支持头衔的群）
+
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
         Args:
@@ -421,14 +447,17 @@ class LLMCancelGroupBan(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool(
         description="在群聊中解除某用户的禁言。参数：user_id-要解禁的用户的QQ号"
     )
-    async def llm_cancel_group_ban(
+    async def llm_cancel_group_ban(self, 
         event: AiocqhttpMessageEvent, user_id: str
     ) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
+
         在群聊中解除某用户的禁言。
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
@@ -463,14 +492,17 @@ class LLMSetGroupCard(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool(
         description="修改群成员的群昵称（群名片）。参数：user_id-用户QQ号，card-新的群昵称（空字符串清除）"
     )
-    async def llm_set_group_card(
+    async def llm_set_group_card(self, 
         event: AiocqhttpMessageEvent, user_id: str, card: str
     ) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
+
         修改群成员的群昵称（群名片）。
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
@@ -506,14 +538,17 @@ class LLMSetEssenceMsg(LLMToolBase):
     source: astrbot_plugin_qqassistant
     """
 
-    @staticmethod
     @filter.llm_tool(
         description="将消息设置为群精华消息。参数：message_id-要设精的消息ID"
     )
     async def llm_set_essence_msg(
-        event: AiocqhttpMessageEvent, message_id: str
+        self, event: AiocqhttpMessageEvent, message_id: str
     ) -> Generator[str, Any, None]:
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
+
         将消息设置为群精华消息。
         
         Args:
