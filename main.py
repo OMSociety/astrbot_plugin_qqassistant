@@ -93,7 +93,6 @@ class QQAdminPlugin(Star):
         setattr(self, 'batch_send_msg', LLMBatchTools.batch_send_msg)
 
         # 注册跨上下文搜索工具
-        cross_tools_instance = register_cross_tools(self)
 
 
         # 转发消息解析器
@@ -231,7 +230,6 @@ class QQAdminPlugin(Star):
         umo = event.unified_msg_origin
         sender_id = event.get_sender_id()
         sender_name = event.get_sender_name() or sender_id
-        ts = asyncio.get_event_loop().time() if asyncio.get_event_loop().is_running() else 0
 
         from .unified_context.history_store import MessageRecord
         import time
