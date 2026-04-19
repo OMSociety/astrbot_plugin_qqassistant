@@ -4,6 +4,24 @@
 
 ---
 
+## v1.1.0
+
+> 🐛 修复版本 — 架构完备性修复 + 可维护性提升
+
+### 正确性修复
+- 🐛 `handle_spamming_ban_time` 写 `word_ban_time` 但 `spamming_ban` 读 `spamming_ban_time`，两把钥匙开一把锁（现已统一）
+- ✨ 所有 LLM 工具接入分组开关（`tool_group_info/action/search/batch/monitor`），配置真正生效
+
+### 资源与架构
+- ✨ `on_unload` 新增外部会话资源关闭（Notion/HTTP 连接泄漏修复）
+- 🗑️ 删除 `permission.py` 冗余的 `get_ats` 函数定义，统一使用 `utils.py` 版本
+- 🗑️ 删除 `main.py` 中未使用的 `cross_tools_instance` 和 `ts` 变量
+
+### Schema 完善
+- ✅ 补齐 `_conf_schema.json` 默认配置字段（工具分组开关、上下文、历史记录、转发解析等），避免隐式关闭
+
+---
+
 ## v1.0.0
 
 > 🎉 初始版本
