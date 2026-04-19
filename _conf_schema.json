@@ -34,6 +34,17 @@
         "default": 50,
         "hint": "超出此数量的旧消息会被丢弃，影响LLM对群聊历史的理解深度"
     },
+    "context_max_sessions": {
+        "description": "上下文缓存的最大会话数",
+        "type": "int",
+        "slider": {
+            "min": 20,
+            "max": 500,
+            "step": 10
+        },
+        "default": 100,
+        "hint": "超过上限后会按LRU淘汰旧会话，防止内存占用持续增长"
+    },
     "context_inject_count": {
         "description": "注入LLM的历史消息条数",
         "type": "int",

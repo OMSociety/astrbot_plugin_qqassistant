@@ -53,6 +53,8 @@ class LLMCrossTools:
         Returns:
             str: 格式化的搜索结果
         """
+        if not self._plugin.cfg.tools.get("tool_group_search", True):
+            return "该功能已关闭~"
         if not self._ensure_init():
             return "上下文引擎尚未初始化，请稍后再试。"
         count = max(1, min(count, 50))
@@ -84,6 +86,8 @@ class LLMCrossTools:
         Returns:
             str: 格式化的搜索结果
         """
+        if not self._plugin.cfg.tools.get("tool_group_search", True):
+            return "该功能已关闭~"
         if not self._ensure_init():
             return "上下文引擎尚未初始化，请稍后再试。"
         length = max(1, min(length, 100))
@@ -124,6 +128,8 @@ class LLMCrossTools:
         Returns:
             str: 场景信息，包括触发类型、对话对象、当前消息等
         """
+        if not self._plugin.cfg.tools.get("tool_group_search", True):
+            return "该功能已关闭~"
         if not self._ensure_init():
             return "上下文引擎尚未初始化，无法判断场景。"
         umo = event.unified_msg_origin

@@ -58,6 +58,7 @@
 |--------|------|--------|------|
 | `context_enable` | bool | `true` | 启用上下文感知（让LLM理解对话场景） |
 | `context_max_history` | int | `50` | 每个群缓存的消息条数上限 |
+| `context_max_sessions` | int | `100` | 上下文缓存的最大会话数（LRU淘汰） |
 | `context_inject_count` | int | `8` | 注入LLM的历史消息条数 |
 | `context_max_chars` | int | `2000` | 历史消息最大字符数（防token溢出） |
 | `bot_names` | list | `[]` | Bot昵称列表（用于检测是否被@） |
