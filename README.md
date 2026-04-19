@@ -114,7 +114,3 @@ LLM调用：search_group_history(keyword="项目计划") → 返回匹配消息
 - AstrBot v3.0.0+
 - 适配平台：aiocqhttp（OneBot V11）
 - Bot需具有：管理员或群主权限（部分功能）
-
-## 作者
-
-Slandre & Flandre
