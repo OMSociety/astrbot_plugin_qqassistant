@@ -98,10 +98,6 @@ class LLMGetGroupMemberList(LLMToolBase):
     @filter.llm_tool()
     async def llm_get_group_member_list(self, event: AiocqhttpMessageEvent) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_info", True):
-            yield "该功能已关闭~"
-            return
-
         获取当前群聊成员列表（昵称/名片/QQ/身份/头衔）
 
         重要提示：在调用需要 user_id 的工具（如禁言、设置头衔、戳一戳）前，应先调用本工具获取群成员列表和对应的QQ号码。
@@ -109,6 +105,9 @@ class LLMGetGroupMemberList(LLMToolBase):
         Returns:
             str: 格式化的成员列表，格式为 "[身份] 显示名称 (QQ: QQ号) [头衔信息]"
         """
+        if not self.cfg.tools.get("tool_group_info", True):
+            yield "该功能已关闭~"
+            return
         try:
             group_id = event.get_group_id()
             if not group_id:
@@ -165,10 +164,6 @@ class LLMGetUserInfo(LLMToolBase):
     @filter.llm_tool()
     async def llm_get_user_info(self, event: AiocqhttpMessageEvent, qq_id: Optional[str] = None) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_info", True):
-            yield "该功能已关闭~"
-            return
-
         获取QQ用户信息（群聊优先取群成员信息，否则取陌生人信息）
 
         Args:
@@ -177,6 +172,9 @@ class LLMGetUserInfo(LLMToolBase):
         Returns:
             str: 用户信息，格式为多行文本，包含QQ号、昵称、群名片、身份、头衔、等级等信息
         """
+        if not self.cfg.tools.get("tool_group_info", True):
+            yield "该功能已关闭~"
+            return
         try:
             target_id = str(qq_id) if qq_id else str(event.get_sender_id())
             if not target_id:
@@ -230,16 +228,15 @@ class LLMGetGroupInfo(LLMToolBase):
     )
     async def llm_get_group_info(self, event: AiocqhttpMessageEvent) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_info", True):
-            yield "该功能已关闭~"
-            return
-
         获取当前群聊的信息
 
         
         Returns:
             str: 群信息，格式为多行文本，包含群号、群名、人数、群主、描述等
         """
+        if not self.cfg.tools.get("tool_group_info", True):
+            yield "该功能已关闭~"
+            return
         try:
             group_id = event.get_group_id()
             if not group_id:
@@ -287,10 +284,6 @@ class LLMPokeUser(LLMToolBase):
     @filter.llm_tool()
     async def llm_poke_user(self, event: AiocqhttpMessageEvent, qq_id: str) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_action", True):
-            yield "该功能已关闭~"
-            return
-
         戳一戳指定用户（群聊/私聊自动判断）
 
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
@@ -301,6 +294,9 @@ class LLMPokeUser(LLMToolBase):
         Returns:
             str: 操作结果消息
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
         try:
             group_id = event.get_group_id()
             if group_id:
@@ -330,10 +326,6 @@ class LLMSetGroupBanUser(LLMToolBase):
     @filter.llm_tool()
     async def llm_set_group_ban_user(self, event: AiocqhttpMessageEvent, user_id: str, duration: int) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_action", True):
-            yield "该功能已关闭~"
-            return
-
         对个人进行禁言（带简单权限判定提示）
 
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
@@ -345,6 +337,9 @@ class LLMSetGroupBanUser(LLMToolBase):
         Returns:
             str: 操作结果消息，包含成功信息或权限不足提示
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
         try:
             group_id = event.get_group_id()
             if not group_id:
@@ -404,10 +399,6 @@ class LLMSetGroupSpecialTitle(LLMToolBase):
     )
     async def llm_set_group_special_title(self, event: AiocqhttpMessageEvent, user_id: str, title: str) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_action", True):
-            yield "该功能已关闭~"
-            return
-
         为群成员设置专属头衔（需要群主权限或支持头衔的群）
 
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
@@ -419,6 +410,9 @@ class LLMSetGroupSpecialTitle(LLMToolBase):
         Returns:
             str: 操作结果消息
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
         try:
             group_id = event.get_group_id()
             if not group_id:
@@ -454,10 +448,6 @@ class LLMCancelGroupBan(LLMToolBase):
         event: AiocqhttpMessageEvent, user_id: str
     ) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_action", True):
-            yield "该功能已关闭~"
-            return
-
         在群聊中解除某用户的禁言。
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
@@ -467,6 +457,9 @@ class LLMCancelGroupBan(LLMToolBase):
         Returns:
             str: 操作结果消息
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
         try:
             await event.bot.set_group_ban(
                 group_id=int(event.get_group_id()),
@@ -499,10 +492,6 @@ class LLMSetGroupCard(LLMToolBase):
         event: AiocqhttpMessageEvent, user_id: str, card: str
     ) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_action", True):
-            yield "该功能已关闭~"
-            return
-
         修改群成员的群昵称（群名片）。
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
@@ -513,6 +502,9 @@ class LLMSetGroupCard(LLMToolBase):
         Returns:
             str: 操作结果消息
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
         try:
             await event.bot.set_group_card(
                 group_id=int(event.get_group_id()),
@@ -545,10 +537,6 @@ class LLMSetEssenceMsg(LLMToolBase):
         self, event: AiocqhttpMessageEvent, message_id: str
     ) -> Generator[str, Any, None]:
         """
-        if not self.cfg.tools.get("tool_group_action", True):
-            yield "该功能已关闭~"
-            return
-
         将消息设置为群精华消息。
         
         Args:
@@ -557,6 +545,9 @@ class LLMSetEssenceMsg(LLMToolBase):
         Returns:
             str: 操作结果消息
         """
+        if not self.cfg.tools.get("tool_group_action", True):
+            yield "该功能已关闭~"
+            return
         try:
             await event.bot.set_essence_msg(message_id=int(message_id))
             logger.info(f"消息 {message_id} 被 {event.get_sender_name()} 设为精华")

@@ -137,7 +137,10 @@ class PluginConfig(ConfigNode):
         self.spamming_interval = 0.5
 
         # ========== 转发消息解析配置 ==========
-        self.enable_forward_message_parsing = cfg.get("enable_forward_message_parsing", True)
+        self.enable_forward_message_parsing = cfg.get(
+            "forward_parse_enable",
+            cfg.get("enable_forward_message_parsing", True),
+        )
         raw_depth = cfg.get("forward_max_nesting_depth", 3)
         try:
             depth = int(raw_depth) if raw_depth is not None else 3

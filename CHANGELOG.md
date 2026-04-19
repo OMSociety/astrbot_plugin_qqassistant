@@ -4,6 +4,25 @@
 
 ---
 
+## v1.2.0
+
+> 🔧 架构补线修复
+
+### 架构与配置
+- ✅ `main.py` 补上 `register_cross_tools(self)`，跨上下文搜索工具可正常注册
+- ✅ 转发解析改为读取配置：`forward_parse_enable / forward_max_nesting_depth / forward_include_sender_info / forward_include_timestamp`
+- ✅ `config.py` 兼容新旧键名：优先 `forward_parse_enable`，兼容 `enable_forward_message_parsing`
+- ✅ `_conf_schema.json` 补齐 `context_max_sessions`，与运行时参数一致
+
+### 工具行为
+- ✅ 修复 `tools/llm_tools.py` 中工具开关判断写在 docstring 的问题，改为真实执行逻辑
+- ✅ `tools/llm_cross_tools.py` 接入 `tool_group_search` 分组开关
+
+### 清理
+- 🧹 移除 `main.py` 未使用导入
+
+---
+
 ## v1.1.0
 
 > 🐛 修复版本 — 架构完备性修复 + 可维护性提升

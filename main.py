@@ -2,7 +2,6 @@
 import asyncio
 import time
 import random
-import re
 
 from astrbot import logger
 from astrbot.api.event import filter
@@ -93,7 +92,7 @@ class QQAdminPlugin(Star):
         setattr(self, 'batch_send_msg', LLMBatchTools.batch_send_msg)
 
         # 注册跨上下文搜索工具
-
+        register_cross_tools(self)
 
         # 转发消息解析器
         self.forward_parser = ForwardMessageParser()
@@ -162,13 +161,14 @@ class QQAdminPlugin(Star):
 
         # 尝试解析合并转发消息
         try:
-            await self.forward_parser.try_parse_and_replace(
-                event,
-                include_sender_info=False,
-                include_timestamp=False,
-                max_nesting_depth=3,
-                debug_mode=False,
-            )
+            if self.cfg.enable_forward_message_parsing:
+                await self.forward_parser.try_parse_and_replace(
+                    event,
+                    include_sender_info=self.cfg.include_sender_info,
+                    include_timestamp=self.cfg.include_timestamp,
+                    max_nesting_depth=self.cfg.forward_max_nesting_depth,
+                    debug_mode=False,
+                )
         except Exception:
             pass
 
@@ -231,8 +231,6 @@ class QQAdminPlugin(Star):
         sender_id = event.get_sender_id()
         sender_name = event.get_sender_name() or sender_id
 
-        from .unified_context.history_store import MessageRecord
-        import time
         msg = MessageRecord(
             msg_id=f"bot_{id(resp)}",
             sender_id=self._scene_engine.bot_id,
