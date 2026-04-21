@@ -45,7 +45,7 @@ class LLMBatchTools:
         重要提示：如果不知道对方的QQ号，请先调用 llm_get_group_member_list 获取群成员列表。
         
         Args:
-            user_ids (List[str]): 要禁言的用户QQ号列表，如 ["123", "456"]
+            user_ids (list[str]): 要禁言的用户QQ号列表，如 ["123", "456"]
             duration (int): 禁言时长（秒），0表示解除禁言
         
         Returns:
@@ -142,7 +142,7 @@ class LLMBatchTools:
         批量发送群消息（管理员专用）
         
         Args:
-            group_ids (List[str]): 要发送到的群号列表，如 ["123456", "789012"]
+            group_ids (list[str]): 要发送到的群号列表，如 ["123456", "789012"]
             message (str): 要发送的消息内容
         
         Returns:
