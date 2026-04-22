@@ -4,6 +4,26 @@
 
 ---
 
+## v1.3.0
+
+> 🔧 **工具规范化重构** — FunctionTool 方式注册
+
+### 架构重构
+- ✅ 重构所有 LLM 工具为 `FunctionTool` dataclass 方式，符合 AstrBot 官方规范
+- ✅ 工具来源显示 `plugin` + `qqassistant`，名称为清晰的英文命名
+- ✅ 批量工具增加 `tool_group_batch` 开关检查
+- ✅ 更新 `tools/__init__.py` 导出新的工具类名
+
+### 工具清单（15个）
+| 分类 | 工具 | 开关 |
+|------|------|------|
+| 信息查询 | get_group_member_list, get_user_info, get_group_info | tool_group_info |
+| 群管操作 | poke_user, set_group_ban, cancel_group_ban, set_group_card, set_group_special_title, set_essence_msg | tool_group_action |
+| 搜索工具 | search_group_history, search_other_chats, get_scene_info | tool_group_search |
+| 批量操作 | batch_ban, batch_set_card, batch_send_msg | tool_group_batch |
+
+---
+
 ## v1.2.0
 
 > 🔧 架构补线修复
