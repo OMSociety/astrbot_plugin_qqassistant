@@ -46,7 +46,7 @@
 - ✨ 所有 LLM 工具接入分组开关（`tool_group_info/action/search/batch/monitor`），配置真正生效
 
 ### 资源与架构
-- ✨ `on_unload` 新增外部会话资源关闭（Notion/HTTP 连接泄漏修复）
+- ✨ `on_unload` 新增外部会话资源关闭
 - 🗑️ 删除 `permission.py` 冗余的 `get_ats` 函数定义，统一使用 `utils.py` 版本
 - 🗑️ 删除 `main.py` 中未使用的 `cross_tools_instance` 和 `ts` 变量
 
