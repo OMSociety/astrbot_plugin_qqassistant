@@ -4,10 +4,11 @@
 - 防止重复注入（带标记）
 - 清空 req.prompt 避免框架重复发送
 """
+
 from __future__ import annotations
+
 from astrbot.api.provider import ProviderRequest
 from astrbot.core.agent.message import TextPart
-
 
 SCENE_MARKER = "<!-- unified_scene_v1 -->"
 
@@ -33,13 +34,13 @@ class PromptBuilder:
             return ""
 
         lines = []
-        for rec in records[-self._max_history:]:
+        for rec in records[-self._max_history :]:
             sender = "[Bot]" if rec.is_bot else rec.sender_name
             lines.append(f"{sender}: {rec.content}")
 
         full = separator.join(lines)
         if len(full) > self._max_chars:
-            full = full[-self._max_chars:]
+            full = full[-self._max_chars :]
         return full
 
     def inject_scene(self, req: ProviderRequest, scene_xml: str) -> None:
@@ -51,14 +52,16 @@ class PromptBuilder:
         if scene_xml in (req.system_prompt or ""):
             return
         try:
-            parts = getattr(req, 'extra_user_content_parts', None)
+            parts = getattr(req, "extra_user_content_parts", None)
             if parts is not None and isinstance(parts, list):
                 parts.append(TextPart(text=scene_xml))
                 return
         except Exception:
             pass
         try:
-            req.system_prompt = (req.system_prompt or "") + f"\n\n{SCENE_MARKER}\n{scene_xml}"
+            req.system_prompt = (
+                req.system_prompt or ""
+            ) + f"\n\n{SCENE_MARKER}\n{scene_xml}"
         except Exception:
             pass
 

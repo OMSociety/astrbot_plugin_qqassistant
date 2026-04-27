@@ -100,7 +100,6 @@ def print_logo():
     print("\033[94m欢迎使用群管插件！\033[0m")  # 蓝色文字
 
 
-
 async def get_nickname(event: AiocqhttpMessageEvent, user_id: int | str) -> str:
     """获取指定群友的群昵称或 Q 名，群接口失败/空结果自动降级到陌生人资料"""
     user_id = int(user_id)
@@ -129,7 +128,6 @@ async def get_nickname(event: AiocqhttpMessageEvent, user_id: int | str) -> str:
 
     # 依次取群名片、QQ 昵称、通用 nick，兜底数字 UID
     return info.get("card") or info.get("nickname") or info.get("nick") or str(user_id)
-
 
 
 def get_replyer_id(event: AiocqhttpMessageEvent) -> str | None:
@@ -194,9 +192,9 @@ def parse_bool(mode: str | bool | None):
     """解析布尔值"""
     mode = str(mode).strip().lower()
     match mode:
-        case "开" | "开启" | "启用" | "on" | "true" | "1" | "是" | "真" :
+        case "开" | "开启" | "启用" | "on" | "true" | "1" | "是" | "真":
             return True
-        case "关" | "关闭" | "禁用" | "off" | "false" | "0" | "否" | "假" :
+        case "关" | "关闭" | "禁用" | "off" | "false" | "0" | "否" | "假":
             return False
         case _:
             return None

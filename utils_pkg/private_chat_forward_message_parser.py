@@ -18,12 +18,11 @@
 import json
 import time
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from astrbot.api import logger
 from astrbot.core.message.components import Forward, Plain
 from astrbot.core.platform.astr_message_event import AstrMessageEvent
-
 
 # 硬上限常量
 FORWARD_NESTING_HARD_LIMIT = 10
@@ -113,7 +112,7 @@ class ForwardMessageParser:
                 forward_id = getattr(forward_comp, "id", None)
                 if not forward_id:
                     if debug_mode:
-                        logger.info(f"[转发消息] Forward 组件无 id 字段，跳过")
+                        logger.info("[转发消息] Forward 组件无 id 字段，跳过")
                     continue
 
                 if debug_mode:
@@ -211,7 +210,7 @@ async def _fetch_forward_nodes(
     call_action,
     forward_id: str,
     debug_mode: bool = False,
-) -> Optional[list]:
+) -> list | None:
     """
     调用 get_forward_msg API 获取转发消息节点列表。
     兼容多种 OneBot 实现的参数格式和响应结构。
@@ -252,7 +251,7 @@ async def _fetch_forward_nodes(
     return None
 
 
-def _extract_nodes_from_response(response: Any) -> Optional[list]:
+def _extract_nodes_from_response(response: Any) -> list | None:
     """
     从 get_forward_msg API 响应中提取节点列表。
     兼容多种响应结构。
@@ -420,7 +419,7 @@ async def _format_single_node(
     depth: int,
     indent: str,
     debug_mode: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """
     格式化单个转发节点为文本行。
 
@@ -567,7 +566,7 @@ async def _handle_nested_forward(
     api_call_counter: dict,
     depth: int,
     debug_mode: bool = False,
-) -> Optional[str]:
+) -> str | None:
     """
     处理嵌套转发消息。
 
@@ -586,30 +585,30 @@ async def _handle_nested_forward(
         indent = "  " * new_depth
         return f"{indent}[嵌套转发消息]（API调用次数已达上限，已省略详细内容）"
 
-    # 尝试获取嵌套转发 ID
+    # 优先使用内联 content（NapCat 等实现在节点中直接内联嵌套转发内容）
+    nested_content = seg_data.get("content")
+    if isinstance(nested_content, list) and len(nested_content) > 0:
+        # 直接解析内联节点，避免不必要的 API 调用
+        return await _format_forward_message(
+            nodes=nested_content,
+            call_action=call_action,
+            forwarder_name=node_sender_name,
+            forwarder_id=node_sender_id,
+            event_timestamp=node_time,
+            include_sender_info=include_sender_info,
+            include_timestamp=include_timestamp,
+            max_nesting_depth=max_nesting_depth,
+            api_call_counter=api_call_counter,
+            depth=new_depth,
+            debug_mode=debug_mode,
+        )
+
+    # fallback: 尝试通过 ID 调用 API 获取嵌套转发内容
     nested_id = seg_data.get("id") or seg_data.get("message_id")
     if not nested_id:
-        # 可能内容直接在 data.content 中（某些 OneBot 实现）
-        nested_content = seg_data.get("content")
-        if isinstance(nested_content, list):
-            # 直接解析内联节点
-            return await _format_forward_message(
-                nodes=nested_content,
-                call_action=call_action,
-                forwarder_name=node_sender_name,
-                forwarder_id=node_sender_id,
-                event_timestamp=node_time,
-                include_sender_info=include_sender_info,
-                include_timestamp=include_timestamp,
-                max_nesting_depth=max_nesting_depth,
-                api_call_counter=api_call_counter,
-                depth=new_depth,
-                debug_mode=debug_mode,
-            )
         indent = "  " * new_depth
         return f"{indent}[嵌套转发消息]（无法获取内容）"
 
-    # 调用 API 获取嵌套转发内容
     api_call_counter["count"] += 1
     nested_nodes = await _fetch_forward_nodes(call_action, str(nested_id), debug_mode)
 
@@ -672,7 +671,7 @@ def _format_timestamp(unix_timestamp: int) -> str:
         return ""
 
 
-def _try_parse_multimsg_json(raw_json: str) -> Optional[str]:
+def _try_parse_multimsg_json(raw_json: str) -> str | None:
     """
     尝试从 JSON 消息中解析合并转发的摘要信息。
     QQ 的合并转发有时以 com.tencent.multimsg JSON 格式出现。

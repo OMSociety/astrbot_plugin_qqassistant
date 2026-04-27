@@ -1,7 +1,8 @@
-""" LLM工具专用插件，提供QQ群管理功能 """
+"""LLM工具专用插件，提供QQ群管理功能"""
+
 import asyncio
-import time
 import random
+import time
 
 from astrbot import logger
 from astrbot.api.event import filter
@@ -22,20 +23,18 @@ from .core import (
     NormalHandle,
     NoticeHandle,
 )
-from .tools.batch.batch_tools import BatchToolsHandle
 from .data import QQAdminDB
 from .permission import (
-    PermLevel,
     perm_manager,
-    perm_required,
 )
-from .utils_pkg import print_logo
-from .unified_context.history_store import HistoryStore, MessageRecord
-from .unified_context.scene_engine import SceneEngine
-from .unified_context.prompt_builder import PromptBuilder
-from .tools.llm_cross_tools import register_cross_tools
-from .utils_pkg.forward_message_parser import ForwardMessageParser
 from .tools import register_llm_tools
+from .tools.batch.batch_tools import BatchToolsHandle
+from .tools.llm_cross_tools import register_cross_tools
+from .unified_context.history_store import HistoryStore, MessageRecord
+from .unified_context.prompt_builder import PromptBuilder
+from .unified_context.scene_engine import SceneEngine
+from .utils_pkg import print_logo
+from .utils_pkg.forward_message_parser import ForwardMessageParser
 
 
 class QQAdminPlugin(Star):
@@ -87,6 +86,7 @@ class QQAdminPlugin(Star):
 
         # 注册批量操作工具（FunctionTool 方式）
         from .tools.batch_llm_tools import register_batch_tools
+
         register_batch_tools(self)
 
         # 注册跨上下文搜索工具（FunctionTool 方式）
@@ -147,10 +147,9 @@ class QQAdminPlugin(Star):
             return
         # 检查是否有转发消息或有效内容
         messages = event.get_messages()
-        has_forward = any(c.__class__.__name__ == 'Forward' for c in messages)
+        has_forward = any(c.__class__.__name__ == "Forward" for c in messages)
         has_normal_content = bool(event.message_str) or any(
-            hasattr(c, 'text') or c.__class__.__name__ == 'Image'
-            for c in messages
+            hasattr(c, "text") or c.__class__.__name__ == "Image" for c in messages
         )
         if not has_forward and not has_normal_content:
             return
@@ -193,13 +192,18 @@ class QQAdminPlugin(Star):
         current = records[-1]
         trigger_type, trigger_desc = self._scene_engine.detect_trigger(event, current)
         self._scene_engine.infer_addressee(
-            current, records,
+            current,
+            records,
             bot_replied_to=state.bot_last_replied_to,
         )
 
         # 注入场景 XML
         scene_xml = self._scene_engine.build_scene_xml(
-            trigger_type, trigger_desc, current, records, state.bot_last_spoke_at,
+            trigger_type,
+            trigger_desc,
+            current,
+            records,
+            state.bot_last_spoke_at,
         )
         self._prompt_builder.inject_scene(req, scene_xml)
 
@@ -241,8 +245,11 @@ class QQAdminPlugin(Star):
         )
         await self._history_store.add_message(umo, msg)
         await self._history_store.record_bot_response(
-            umo, resp.completion_text, time.time(),
-            replied_to=sender_id, replied_to_name=sender_name,
+            umo,
+            resp.completion_text,
+            time.time(),
+            replied_to=sender_id,
+            replied_to_name=sender_name,
         )
 
     async def terminate(self):

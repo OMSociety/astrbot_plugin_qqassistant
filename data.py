@@ -8,6 +8,7 @@ from astrbot.api import logger
 from .config import PluginConfig
 from .utils import parse_bool
 
+
 class QQAdminDB:
     """
     群管插件数据库（极简 API + 动态字段 + 自动补齐）
@@ -179,7 +180,6 @@ class QQAdminDB:
             self._conn = None
             self._initialized = False
 
-
     # ====================== 中文展示、读回 ======================
 
     async def export_cn_lines(self, gid: str) -> str:
@@ -264,7 +264,6 @@ class QQAdminDB:
         await self._save_to_db(gid, data)
         return data
 
-
     async def reset_to_default(self, gid: str | None = None):
         """把指定群（或全部群）配置恢复成 default_cfg"""
         targets = [gid] if gid else list(self._cache.keys())
@@ -273,24 +272,3 @@ class QQAdminDB:
             await self._save_to_db(g, self._cache[g])
 
         logger.info(f"群聊{gid}的群管配置已重置为默认值")
-
-def parse_bool(mode: str | bool | None) -> bool | None:
-    """
-    解析布尔值
-    
-    Args:
-        mode: 输入值，支持字符串/布尔/None
-        
-    Returns:
-        True: 开/开启/启用/on/true/1/是/真
-        False: 关/关闭/禁用/off/false/0/否/假
-        None: 无法识别的值
-    """
-    mode = str(mode).strip().lower()
-    match mode:
-        case "开" | "开启" | "启用" | "on" | "true" | "1" | "是" | "真":
-            return True
-        case "关" | "关闭" | "禁用" | "off" | "false" | "0" | "否" | "假":
-            return False
-        case _:
-            return None

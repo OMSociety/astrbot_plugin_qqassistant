@@ -1,9 +1,8 @@
 # config.py
 from __future__ import annotations
 
-from pathlib import Path
 from collections.abc import Mapping, MutableMapping
-import random
+from pathlib import Path
 from types import MappingProxyType, UnionType
 from typing import Any, Union, get_args, get_origin, get_type_hints
 
@@ -145,7 +144,9 @@ class PluginConfig(ConfigNode):
         try:
             depth = int(raw_depth) if raw_depth is not None else 3
         except (ValueError, TypeError):
-            logger.warning(f"[转发解析] forward_max_nesting_depth配置值'{raw_depth}'无法转换为整数，使用默认值3")
+            logger.warning(
+                f"[转发解析] forward_max_nesting_depth配置值'{raw_depth}'无法转换为整数，使用默认值3"
+            )
             depth = 3
         depth = max(0, min(depth, 10))
         self.forward_max_nesting_depth = depth
@@ -161,7 +162,7 @@ class PluginConfig(ConfigNode):
     def tools(self) -> dict:
         """
         获取工具开关配置，兼容旧的 getattr 访问方式
-        
+
         新版本使用分组开关：tool_group_info / tool_group_action / tool_group_search / tool_group_batch / tool_group_monitor
         旧版本使用独立开关：get_group_member_list / set_group_ban 等（向下兼容）
         """

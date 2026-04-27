@@ -4,7 +4,6 @@ from functools import wraps
 from typing import Any, cast
 
 from astrbot import logger
-from astrbot.api.message_components import At
 from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import (
     AiocqhttpMessageEvent,
 )
@@ -17,6 +16,7 @@ class PermLevel:
     """
     定义用户的权限等级。数字越小，权限越高。
     """
+
     SUPERUSER = 0
     OWNER = 1
     ADMIN = 2
@@ -77,8 +77,7 @@ class PermissionManager:
 
     def _is_admin_only_tool(self, tool_key: str) -> bool:
         """检查工具是否始终仅管理员可用"""
-        permissions = getattr(self.cfg, 'permissions', {}) or {}
-        admin_only_tools = permissions.get('admin_only_tools', []) or []
+        admin_only_tools = (self.cfg.permissions or {}).get("admin_only_tools", []) or []
         return tool_key in admin_only_tools
 
     async def get_perm_level(
@@ -120,7 +119,6 @@ class PermissionManager:
     ) -> str | None:
         """检查用户是否有权限执行操作，返回错误信息或 None 表示通过"""
         user_level = await self.get_perm_level(event, user_id=event.get_sender_id())
-        permissions = getattr(self.cfg, 'permissions', {}) or {}
 
         # 工具权限判断：默认所有工具对成员开放，只有在 admin_only_tools 中的才需要管理员权限
         if self._is_admin_only_tool(tool_key):
@@ -158,6 +156,7 @@ def perm_required(
     :param bot_perm: Bot 执行此命令所需的最低权限等级。
     :param check_at: 是否检查"是否有权对被@者实施操作"。
     """
+
     def decorator(
         func: Callable[..., AsyncGenerator[Any, Any] | Awaitable[Any]],
     ) -> Callable[..., AsyncGenerator[Any, Any]]:
@@ -204,14 +203,3 @@ def perm_required(
         return wrapper
 
     return decorator
-
-
-def get_ats(event: AiocqhttpMessageEvent) -> list[str]:
-    """
-    获取消息at者的QQ号列表（排除机器人自身）
-    """
-    return [
-        str(seg.qq)
-        for seg in event.get_messages()
-        if (isinstance(seg, At) and str(seg.qq) != event.get_self_id())
-    ]

@@ -9,7 +9,6 @@ from ..config import PluginConfig
 from ..data import QQAdminDB
 from ..utils import get_nickname, get_reply_message_str, parse_bool
 
-
 """
 进群审核与退群管理模块
 
@@ -20,6 +19,7 @@ from ..utils import get_nickname, get_reply_message_str, parse_bool
 - 进群后临时禁言
 """
 
+
 class JoinHandle:
     def __init__(self, config: PluginConfig, db: QQAdminDB):
         self.cfg = config
@@ -29,9 +29,7 @@ class JoinHandle:
     async def _send_admin(self, client: CQHttp, message: str):
         for admin_id in self.cfg.admins_id:
             try:
-                await client.send_private_msg(
-                    user_id=int(admin_id), message=message
-                )
+                await client.send_private_msg(user_id=int(admin_id), message=message)
             except Exception as e:
                 logger.error(f"无法发送消息给bot管理员：{e}")
 
@@ -337,12 +335,8 @@ class JoinHandle:
                     msg += "，已拉黑"
                 await event.send(event.plain_result(msg))
 
-
         # 进群欢迎、禁言
-        elif (
-            raw.get("notice_type") == "group_increase"
-            and uid != event.get_self_id()
-        ):
+        elif raw.get("notice_type") == "group_increase" and uid != event.get_self_id():
             # 进群欢迎
             join_welcome = await self.db.get(gid, "join_welcome")
             if join_welcome:
@@ -373,7 +367,9 @@ class JoinHandle:
                     notice_text = msg_obj.get("text", "")
                     images = msg_obj.get("image", [])
                     # 替换 HTML 实体格式的换行
-                    notice_text = notice_text.replace("&#10;", "\n").replace("&#10", "\n")
+                    notice_text = notice_text.replace("&#10;", "\n").replace(
+                        "&#10", "\n"
+                    )
                     notice_lines = [
                         f"【群公告】{sender_name} 发布了新公告：",
                     ]
@@ -386,7 +382,9 @@ class JoinHandle:
                     # 兜底：直接显示字符串内容
                     notice_text = msg_obj.replace("&#10;", "\n").replace("&#10", "\n")
                     await event.send(
-                        event.plain_result(f"【群公告】{sender_name} 发布了新公告：\n{notice_text.strip()}")
+                        event.plain_result(
+                            f"【群公告】{sender_name} 发布了新公告：\n{notice_text.strip()}"
+                        )
                     )
 
     async def set_approve(

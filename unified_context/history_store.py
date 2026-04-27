@@ -3,15 +3,16 @@
 - 使用 deque + LRU，避免与框架内置 LTM 冲突
 - 同时服务场景感知和原始消息注入
 """
+
 from __future__ import annotations
-from collections import deque, OrderedDict
+
+import asyncio
+from collections import OrderedDict, deque
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
-import asyncio
-import time
 
 if TYPE_CHECKING:
-    from astrbot.api.event import AstrMessageEvent
+    pass
 
 
 # ============================================================================
@@ -34,6 +35,7 @@ TRIGGER_UNKNOWN = "unknown"
 @dataclass(slots=True)
 class MessageRecord:
     """轻量级消息记录"""
+
     msg_id: str
     sender_id: str
     sender_name: str
@@ -52,6 +54,7 @@ class MessageRecord:
 @dataclass(slots=True)
 class SessionState:
     """会话状态 - 每个群/私聊一个"""
+
     messages: deque = field(default_factory=lambda: deque(maxlen=50))
     bot_last_spoke_at: float = 0.0
     bot_last_content: str = ""
@@ -67,7 +70,7 @@ class HistoryStore:
     """
     统一消息存储，替代 context_aware 的 SessionManager 和
     group_context 的 session_chats dict。
-    
+
     使用 OrderedDict 实现 LRU + asyncio.Lock 并发保护。
     """
 
@@ -98,13 +101,15 @@ class HistoryStore:
         async with self._get_lock(session_id):
             state = await self._get_or_create_session(session_id)
             # 过滤掉MC服务器转发消息，不记录到历史
-            if getattr(msg, 'is_mc_forward', False):
+            if getattr(msg, "is_mc_forward", False):
                 return
             state.messages.append(msg)
             if not msg.is_bot:
                 state.last_user_interaction[msg.sender_id] = msg.timestamp
 
-    async def get_snapshot(self, session_id: str) -> tuple[list[MessageRecord], SessionState]:
+    async def get_snapshot(
+        self, session_id: str
+    ) -> tuple[list[MessageRecord], SessionState]:
         async with self._get_lock(session_id):
             if session_id not in self._sessions:
                 return [], SessionState()
@@ -112,8 +117,12 @@ class HistoryStore:
             return list(state.messages), state
 
     async def record_bot_response(
-        self, session_id: str, content: str, ts: float,
-        replied_to: str = "", replied_to_name: str = ""
+        self,
+        session_id: str,
+        content: str,
+        ts: float,
+        replied_to: str = "",
+        replied_to_name: str = "",
     ) -> None:
         async with self._get_lock(session_id):
             if session_id not in self._sessions:
@@ -143,7 +152,7 @@ class HistoryStore:
             original = len(state.messages)
             state.messages = deque(
                 (m for m in state.messages if m.msg_id != msg_id),
-                maxlen=state.messages.maxlen
+                maxlen=state.messages.maxlen,
             )
             return original - len(state.messages) > 0
 

@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 - 清理不活跃/低等级群成员
 """
 
+
 class MemberHandle:
     def __init__(self, plugin: QQAdminPlugin):
         self.plugin = plugin
@@ -48,7 +49,6 @@ class MemberHandle:
         # TODO 做张好看的图片来展示
         url = await self.plugin.text_to_image(info_str)
         await event.send(event.image_result(url))
-
 
     async def clear_group_member(
         self,

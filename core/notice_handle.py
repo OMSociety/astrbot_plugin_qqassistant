@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 - 查看历史群公告
 """
 
+
 class NoticeHandle:
     def __init__(self, plugin: QQAdminPlugin, config: PluginConfig):
         self.plugin = plugin
