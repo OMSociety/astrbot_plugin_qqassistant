@@ -1,6 +1,6 @@
 name: qqassistant
 display_name: QQ端百宝箱
-desc: 为LLM提供QQ群管工具接口，支持禁言、解禁、改名、头衔、精华、戳一戳、搜索历史等，并提供上下文感知能力让LLM理解对话场景
+desc: 为 LLM 提供 QQ 群管工具接口，支持禁言、解禁、改名、头衔、精华、历史搜索、批量操作等，具备上下文感知能力让 LLM 理解对话场景
 version: v1.3.0
 author: Slandre & Flandre
 repo: https://github.com/OMSociety/astrbot_plugin_qqassistant
