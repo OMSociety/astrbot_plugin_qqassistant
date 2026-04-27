@@ -4,7 +4,7 @@
 [![AstrBot](https://img.shields.io/badge/AstrBot-%E2%89%A5v4-green.svg)](https://github.com/AstrBotDevs/AstrBot)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
-为 LLM 提供 QQ 群管工具接口的 AstrBot 插件，支持禁言、解禁、改名、头衔、精华、历史搜索、批量操作等，具备上下文感知能力让 LLM 理解对话场景。
+为 LLM 提供 QQ 群管工具接口，支持禁言、解禁、改名、头衔、精华、历史搜索、批量操作等，具备上下文感知能力让 LLM 理解对话场景。。
 
 > 本项目由AI编写，部分源码基于 [astrbot_plugin_qqadmin](https://github.com/Zhalslar/astrbot_plugin_qqadmin) 。
 
