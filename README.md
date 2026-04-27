@@ -6,6 +6,8 @@
 
 为 LLM 提供 QQ 群管工具接口的 AstrBot 插件，支持禁言、解禁、改名、头衔、精华、历史搜索、批量操作等。具备上下文感知能力让 LLM 理解对话场景，支持合并转发消息智能解析。
 
+> 本项目由AI编写，部分源码基于 [astrbot_plugin_qqadmin](https://github.com/Zhalslar/astrbot_plugin_qqadmin) 。
+
 [快速开始](#-快速开始) • [功能列表](#-功能列表) • [配置项](#-配置项说明) • [LLM 工具](#-llm-可调用工具) • [更新日志](CHANGELOG.md)
 
 ---
