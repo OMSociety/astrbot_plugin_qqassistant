@@ -105,6 +105,13 @@ class SceneEngine:
         ]
         if any(re.search(p, content) for p in mc_patterns):
             msg.is_mc_forward = True
+            # 提取MC玩家名，改写sender信息，使上下文检索能正确识别
+            mc_name_match = re.match(r"〔([^〕]+)〕", content) or re.match(r"<([^>]+)>\s", content) or re.match(r"\[([^\]]+)\]\s", content)
+            if mc_name_match:
+                player_name = mc_name_match.group(1)
+                msg.sender_name = player_name
+                msg.sender_id = f"mc:{player_name}"
+                msg.is_bot = False
 
         for comp in event.get_messages():
             if isinstance(comp, At):
@@ -116,6 +123,12 @@ class SceneEngine:
                 msg.at_all = True
             elif isinstance(comp, Reply) and comp.sender_id:
                 msg.reply_to_id = str(comp.sender_id)
+                # 检测被引用消息是否为MC转发，提取游戏ID
+                reply_text = getattr(comp, "message_str", "") or ""
+                if reply_text:
+                    mc_reply_match = re.match(r"〔([^〕]+)〕", reply_text)
+                    if mc_reply_match:
+                        msg.reply_to_mc_player = mc_reply_match.group(1)
 
         return msg
 
@@ -123,6 +136,9 @@ class SceneEngine:
         self, event: AstrMessageEvent, msg: MessageRecord
     ) -> tuple[str, str]:
         """检测触发类型"""
+        if msg.is_mc_forward:
+            return "ignore", "MC服务器转发消息"
+
         if event.is_private_chat():
             return TRIGGER_PRIVATE, f"{msg.sender_name} 在私聊中"
 
@@ -166,6 +182,9 @@ class SceneEngine:
         核心原则：宁可信"群聊"，不可激进判断"在和Bot说话"。
         只有高置信度时才判断 talking_to = "bot"。
         """
+        if getattr(msg, "is_mc_forward", False):
+            return "ignore"
+
         # 规则1：@Bot
         if msg.at_bot:
             msg.talking_to = "bot"
@@ -180,6 +199,12 @@ class SceneEngine:
 
         # 规则3：回复某人
         if msg.reply_to_id:
+            # MC回复优先：从Reply组件提取的MC玩家名
+            if getattr(msg, "reply_to_mc_player", None):
+                msg.talking_to = msg.reply_to_mc_player
+                msg.talking_to_name = f"MC:{msg.reply_to_mc_player}"
+                return msg.reply_to_mc_player
+
             if msg.reply_to_id == self._bot_id:
                 # 检查被回复的消息是否是MC服务器转发消息
                 # reply_to_id 是被回复消息的 sender_id，这里检查最近一条bot消息是否是MC转发

@@ -47,6 +47,7 @@ class MessageRecord:
     at_all: bool = False
     at_targets: list[tuple[str, str]] = field(default_factory=list)  # (qq, name)
     reply_to_id: str | None = None
+    reply_to_mc_player: str | None = None
     talking_to: str = "group"
     talking_to_name: str = "群聊"
 
@@ -100,9 +101,6 @@ class HistoryStore:
     async def add_message(self, session_id: str, msg: MessageRecord) -> None:
         async with self._get_lock(session_id):
             state = await self._get_or_create_session(session_id)
-            # 过滤掉MC服务器转发消息，不记录到历史
-            if getattr(msg, "is_mc_forward", False):
-                return
             state.messages.append(msg)
             if not msg.is_bot:
                 state.last_user_interaction[msg.sender_id] = msg.timestamp
