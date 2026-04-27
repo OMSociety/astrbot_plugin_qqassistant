@@ -7,7 +7,6 @@
 - 批量发送消息
 """
 
-
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 

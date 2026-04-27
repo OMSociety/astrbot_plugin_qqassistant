@@ -128,21 +128,27 @@ class FileHandle:
             lines.append(f"文件大小: {size / (1024**2):.2f} MB")
 
         lines.append(
-            f"上传者：{file.get('uploader_name', '未知')}({file.get('uploader', '未知')})"
+            f"上传者：{file.get('uploader_name', '未知')}"
+            f"({file.get('uploader', '未知')})"
         )
         lines.append(f"下载次数：{file.get('download_times', '未知')}")
 
         if upload_time := file.get("upload_time", 0):
             lines.append(
-                f"上传时间：{datetime.fromtimestamp(upload_time).strftime('%Y-%m-%d %H:%M:%S')}"
+                f"上传时间："
+                f"{datetime.fromtimestamp(upload_time).strftime('%Y-%m-%d %H:%M:%S')}"
             )
         dead_time = file.get("dead_time", 0)
-        lines.append(
-            f"过期时间：{'永久有效' if dead_time == 0 else datetime.fromtimestamp(dead_time).strftime('%Y-%m-%d %H:%M:%S')}"
+        expiry = (
+            "永久有效"
+            if dead_time == 0
+            else datetime.fromtimestamp(dead_time).strftime("%Y-%m-%d %H:%M:%S")
         )
+        lines.append(f"过期时间：{expiry}")
         if modify_time := file.get("modify_time", 0):
             lines.append(
-                f"修改时间：{datetime.fromtimestamp(modify_time).strftime('%Y-%m-%d %H:%M:%S')}"
+                f"修改时间："
+                f"{datetime.fromtimestamp(modify_time).strftime('%Y-%m-%d %H:%M:%S')}"
             )
         logger.debug(f"文件ID：{file.get('file_id', '未知')}")
         return "\n".join(lines)

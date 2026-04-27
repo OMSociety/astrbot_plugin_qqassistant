@@ -27,7 +27,7 @@ class BanproHandle:
         self.last_banned_time: dict[str, dict[str, float]] = defaultdict(
             lambda: defaultdict(float)
         )
-        # 记录投票 {group_id: {"target": target_id, "votes": {user_id: bool}, "expire": timestamp, "threshold": threshold,}}
+        # 投票缓存: {gid: {target, votes, expire, threshold}}
         self.vote_cache: dict[str, dict] = {}
 
     async def handle_word_ban_time(

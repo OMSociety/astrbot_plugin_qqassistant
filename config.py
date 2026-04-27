@@ -145,7 +145,8 @@ class PluginConfig(ConfigNode):
             depth = int(raw_depth) if raw_depth is not None else 3
         except (ValueError, TypeError):
             logger.warning(
-                f"[转发解析] forward_max_nesting_depth配置值'{raw_depth}'无法转换为整数，使用默认值3"
+                "[转发解析] forward_max_nesting_depth 配置值 "
+                f"'{raw_depth}' 无法转换为整数，使用默认值 3"
             )
             depth = 3
         depth = max(0, min(depth, 10))
@@ -163,7 +164,9 @@ class PluginConfig(ConfigNode):
         """
         获取工具开关配置，兼容旧的 getattr 访问方式
 
-        新版本使用分组开关：tool_group_info / tool_group_action / tool_group_search / tool_group_batch / tool_group_monitor
+        新版本使用分组开关：
+        tool_group_info / tool_group_action / tool_group_search /
+        tool_group_batch / tool_group_monitor
         旧版本使用独立开关：get_group_member_list / set_group_ban 等（向下兼容）
         """
         tools_data = self._data.get("tools", {})

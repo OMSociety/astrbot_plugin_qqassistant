@@ -77,7 +77,9 @@ class PermissionManager:
 
     def _is_admin_only_tool(self, tool_key: str) -> bool:
         """检查工具是否始终仅管理员可用"""
-        admin_only_tools = (self.cfg.permissions or {}).get("admin_only_tools", []) or []
+        admin_only_tools = (self.cfg.permissions or {}).get(
+            "admin_only_tools", []
+        ) or []
         return tool_key in admin_only_tools
 
     async def get_perm_level(
@@ -120,7 +122,8 @@ class PermissionManager:
         """检查用户是否有权限执行操作，返回错误信息或 None 表示通过"""
         user_level = await self.get_perm_level(event, user_id=event.get_sender_id())
 
-        # 工具权限判断：默认所有工具对成员开放，只有在 admin_only_tools 中的才需要管理员权限
+        # 工具权限判断：默认所有工具对成员开放，
+        # 仅在 admin_only_tools 中的才需要管理员权限
         if self._is_admin_only_tool(tool_key):
             required_level = PermLevel.ADMIN
         else:
