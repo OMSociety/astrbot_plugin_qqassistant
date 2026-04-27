@@ -222,7 +222,7 @@ astrbot_plugin_qqassistant/
 
 ## 🌐 环境要求
 
-- **AstrBot** ≥ v3.0.0
+- **AstrBot** ≥ v4.0.0
 - **适配平台**：aiocqhttp（OneBot V11）
 - **Bot 权限**：管理员或群主（部分功能需要）
 
