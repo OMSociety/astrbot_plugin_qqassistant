@@ -65,10 +65,12 @@ class SearchGroupHistoryTool(CrossToolBase, FunctionTool[AstrAgentContext]):
     async def call(self, context: ContextWrapper, **kwargs) -> ToolExecResult:
         try:
             if not self._ensure_init():
-                return ToolExecResult("上下文引擎尚未初始化，请稍后再试。")
+                return "上下文引擎尚未初始化，请稍后再试。"
+
 
             if not self._plugin.cfg.tools.get("tool_group_search", True):
-                return ToolExecResult("该功能已关闭~")
+                return "该功能已关闭~"
+
 
             keyword = kwargs.get("keyword", "")
             count = kwargs.get("count", 10)
@@ -86,12 +88,15 @@ class SearchGroupHistoryTool(CrossToolBase, FunctionTool[AstrAgentContext]):
             ][-count:]
 
             if not matched:
-                return ToolExecResult(f"在当前群聊中未找到包含「{keyword}」的消息。")
+                return f"在当前群聊中未找到包含「{keyword}」的消息。"
 
-            return ToolExecResult("【当前群聊搜索结果】\n" + "\n".join(matched))
+
+            return "【当前群聊搜索结果】\n" + "\n".join(matched)
+
         except Exception as e:
             logger.error(f"搜索群聊历史失败: {e}")
-            return ToolExecResult(f"搜索失败: {e}")
+            return f"搜索失败: {e}"
+
 
 
 @dataclass(config={"arbitrary_types_allowed": True})
@@ -128,10 +133,12 @@ class SearchOtherChatsTool(CrossToolBase, FunctionTool[AstrAgentContext]):
     async def call(self, context: ContextWrapper, **kwargs) -> ToolExecResult:
         try:
             if not self._ensure_init():
-                return ToolExecResult("上下文引擎尚未初始化，请稍后再试。")
+                return "上下文引擎尚未初始化，请稍后再试。"
+
 
             if not self._plugin.cfg.tools.get("tool_group_search", True):
-                return ToolExecResult("该功能已关闭~")
+                return "该功能已关闭~"
+
 
             is_group = kwargs.get("is_group", True)
             subject_id = kwargs.get("subject_id", "")
@@ -149,7 +156,8 @@ class SearchOtherChatsTool(CrossToolBase, FunctionTool[AstrAgentContext]):
                 history = json.loads(conv.history) if conv and conv.history else []
             except Exception as e:
                 logger.error(f"[CrossTools] 获取聊天历史失败: {e}")
-                return ToolExecResult(f"获取聊天历史失败: {e}")
+                return f"获取聊天历史失败: {e}"
+
 
             matched = []
             for msg in history:
@@ -167,13 +175,16 @@ class SearchOtherChatsTool(CrossToolBase, FunctionTool[AstrAgentContext]):
 
             recent = matched[-length:]
             if not recent:
-                return ToolExecResult(f"在指定会话中未找到包含「{keyword}」的消息。")
+                return f"在指定会话中未找到包含「{keyword}」的消息。"
+
 
             scope = f"群{subject_id}" if is_group else f"私聊{subject_id}"
-            return ToolExecResult(f"【{scope} 搜索结果】\n" + "\n".join(recent))
+            return f"【{scope} 搜索结果】\n" + "\n".join(recent)
+
         except Exception as e:
             logger.error(f"跨会话搜索失败: {e}")
-            return ToolExecResult(f"搜索失败: {e}")
+            return f"搜索失败: {e}"
+
 
 
 @dataclass(config={"arbitrary_types_allowed": True})
@@ -193,10 +204,12 @@ class GetSceneInfoTool(CrossToolBase, FunctionTool[AstrAgentContext]):
     async def call(self, context: ContextWrapper, **kwargs) -> ToolExecResult:
         try:
             if not self._ensure_init():
-                return ToolExecResult("上下文引擎尚未初始化，无法判断场景。")
+                return "上下文引擎尚未初始化，无法判断场景。"
+
 
             if not self._plugin.cfg.tools.get("tool_group_search", True):
-                return ToolExecResult("该功能已关闭~")
+                return "该功能已关闭~"
+
 
             event = context.context.event
             store = getattr(self._plugin, "_history_store", None)
@@ -206,7 +219,8 @@ class GetSceneInfoTool(CrossToolBase, FunctionTool[AstrAgentContext]):
             records = store.get_recent(umo, 10)
 
             if not records:
-                return ToolExecResult("当前无群聊历史记录，无法判断场景。")
+                return "当前无群聊历史记录，无法判断场景。"
+
 
             current = records[-1]
             trigger_type, trigger_desc = scene.detect_trigger(event, current)
@@ -221,10 +235,12 @@ class GetSceneInfoTool(CrossToolBase, FunctionTool[AstrAgentContext]):
                 prev = records[-2]
                 lines.append(f"上一条: {prev.sender_name}: {prev.content[:50]}")
 
-            return ToolExecResult("\n".join(lines))
+            return "\n".join(lines)
+
         except Exception as e:
             logger.error(f"获取场景信息失败: {e}")
-            return ToolExecResult(f"获取场景信息失败: {e}")
+            return f"获取场景信息失败: {e}"
+
 
 
 def register_cross_tools(plugin_instance) -> None:
